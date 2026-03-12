@@ -1,34 +1,29 @@
-# 🚀 Consumer Goods Sales Analysis — SQL + Excel Analytics
+# 📊 Consumer Goods Revenue Risk & Payment Failure Analysis
 
-SQL + Excel–based analytics on 1L+ transactions uncovering drivers of flat revenue, high cancellations, churn risk, returns, shipment delays, and payment leakage using T-SQL and ad-hoc Excel analysis.
-
-**Domain:** Consumer Goods / Retail | **Database:** SQL Server (T-SQL)
+An end-to-end **Consumer Goods Revenue Risk & Payment Failure Analysis** project focused on identifying revenue leakage, payment failures, cancellations, and operational inefficiencies across large-scale transactional datasets.  
+This project supports stakeholders in monitoring financial performance, identifying risk drivers, and enabling data-driven recovery strategies.
 
 ---
 
 ## 📌 Business Context
 
-A consumer goods distributor operating across 4 regions had no consolidated reporting layer.
-Data was siloed across multiple systems and management lacked visibility into revenue trends, cancellations, churn, and payment realisation.
-
-This project builds a structured SQL analytics layer replacing ad hoc Excel reporting with repeatable, production-ready queries.
+Consumer goods organizations often face revenue loss due to cancellations, failed payments, returns, and operational bottlenecks.  
+This project builds a structured SQL-based analytics layer to improve visibility into revenue performance, customer risk exposure, and payment realization trends.
 
 ---
 
 ## 📦 Dataset Overview
 
-| Table         | Rows     | Description                         |
-| ------------- | -------- | ----------------------------------- |
-| Fact_Sales    | 1,00,140 | Orders, revenue, quantity, discount |
-| Fact_Shipment | 59,950   | Ship & delivery data                |
-| Fact_Returns  | 9,037    | Return reasons & refunds            |
-| Fact_Payments | 60,079   | Payment status tracking             |
-| Dim_Order     | 40,000   | Channel & priority                  |
-| Dim_Customer  | 5,000    | Customer master                     |
-| Dim_Product   | 500      | Category hierarchy                  |
-| Dim_Region    | 4        | Regions                             |
-| Dim_Supplier  | 50       | Supplier details                    |
-| Dim_Date      | 1,461    | Date dimension                      |
+| Table         | Description                          |
+| ------------- | ------------------------------------ |
+| Fact_Sales    | Orders, revenue, quantity, discount  |
+| Fact_Shipment | Shipment and delivery performance    |
+| Fact_Returns  | Return tracking and refunds          |
+| Fact_Payments | Payment status and reconciliation    |
+| Dim_Customer  | Customer master data                 |
+| Dim_Product   | Product hierarchy                    |
+| Dim_Region    | Regional segmentation                |
+| Dim_Date      | Date dimension                       |
 
 ---
 
@@ -47,31 +42,22 @@ This project builds a structured SQL analytics layer replacing ad hoc Excel repo
 
 ---
 
-## 🔎 Key Business Problems Solved
+## 🔎 Key Business Problems Addressed
 
-### 1️⃣ Flat Revenue Across 4 Years
+### 1️⃣ Revenue Performance Visibility  
+Identified stagnant revenue trends and key drivers across product categories and regions.
 
-YoY analysis confirmed revenue remained between ₹7.77 Cr–₹7.96 Cr with category-mix shift identified as root cause.
+### 2️⃣ High Cancellation Rates  
+Detected systemic operational issues affecting multiple channels and workflows.
 
-### 2️⃣ 33.5% Cancellation Rate
+### 3️⃣ Payment Failure & Revenue Leakage  
+Reconciled transactions to highlight unrecovered revenue exposure.
 
-Uniform across channels — identified as systemic operational issue rather than channel-specific.
+### 4️⃣ Customer Risk Exposure  
+Segmented customers based on activity patterns to identify at-risk segments.
 
-### 3️⃣ Customer Churn Without Tracking
-
-Built classification:
-
-* Active (<90 days)
-* At Risk (90–365 days)
-* Churned (>365 days)
-
-### 4️⃣ Returns Root Cause
-
-Late delivery identified as primary driver — not product quality.
-
-### 5️⃣ ₹20.96 Cr Revenue at Risk
-
-Payment reconciliation showed only ₹10.42 Cr realised.
+### 5️⃣ Returns Analysis  
+Identified operational and fulfillment-related drivers impacting returns.
 
 ---
 
@@ -93,17 +79,17 @@ Payment reconciliation showed only ₹10.42 Cr realised.
 
 ## ⚙️ Analysis Approach
 
-Ad-hoc validation and exploratory slicing (returns, cancellations, customer cohorts) were first performed in Excel using PivotTables before productionizing logic into scalable SQL queries.
+Initial exploratory validation was conducted using Excel (PivotTables and QA checks), followed by scalable implementation using structured SQL logic for production-ready reporting.
 
 ---
 
 ## ⚙️ Production SQL Patterns Used
 
 ```sql
--- Dynamic filters
+-- Dynamic filtering for recency-based analysis
 WHERE last_order_date <= DATEADD(DAY, -90, GETDATE())
 
--- Safe division
+-- Safe division logic
 SUM(Sales_Amount) / NULLIF(COUNT(DISTINCT Order_ID), 0)
 
 -- Running totals
@@ -112,7 +98,7 @@ SUM(daily_revenue) OVER (
  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
 )
 
--- Percentile segmentation
+-- Percentile-based segmentation
 PERCENTILE_DISC(0.90) WITHIN GROUP (ORDER BY total_revenue) OVER()
 ```
 
@@ -120,14 +106,14 @@ PERCENTILE_DISC(0.90) WITHIN GROUP (ORDER BY total_revenue) OVER()
 
 ## 🛠 Tech Stack
 
-| Tool               | Usage                                 |
-| ------------------ | ------------------------------------- |
-| SQL Server (T-SQL) | Core analytics queries                |
-| SSMS               | Query development                     |
-| Excel              | Ad-hoc validation, pivot analysis, QA |
-| CTEs               | Modular business logic                |
-| Window Functions   | LAG, LEAD, SUM OVER                   |
-| CASE Expressions   | Segmentation                          |
+| Tool               | Usage                              |
+| ------------------ | ---------------------------------- |
+| SQL Server (T-SQL) | Core analytics queries             |
+| SSMS               | Query development                  |
+| Excel              | Validation and exploratory checks  |
+| CTEs               | Modular business logic             |
+| Window Functions   | Trend and cohort analysis          |
+| CASE Expressions   | Customer segmentation              |
 
 ---
 
@@ -144,9 +130,9 @@ PERCENTILE_DISC(0.90) WITHIN GROUP (ORDER BY total_revenue) OVER()
 
 ## 👤 Author
 
-**Avinash Dubey** — Data Analyst (≈3 YOE)
+**Avinash Dubey — Data Analyst (≈3 YOE)**  
 
-📧 [dubeyavinash157@gmail.com](mailto:dubeyavinash157@gmail.com)
-🔗 LinkedIn: https://www.linkedin.com/in/avinash7007/
-🌐 Portfolio: https://avinash7007.github.io/avinash-portfolio/
-🐙 GitHub: https://github.com/Avinash7007
+📧 dubeyavinash157@gmail.com  
+🔗 https://www.linkedin.com/in/avinash7007/  
+🌐 https://avinash7007.github.io/avinash-portfolio/  
+🐙 https://github.com/Avinash7007
