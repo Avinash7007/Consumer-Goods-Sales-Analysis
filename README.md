@@ -1,14 +1,14 @@
-# 📊 Consumer Goods Revenue Risk & Payment Failure Analysis
+# 📊 Consumer Goods Revenue Risk & Payment Failure Analysis  
 
-An end-to-end **Consumer Goods Revenue Risk & Payment Failure Analysis** project focused on identifying revenue leakage, payment failures, cancellations, and operational inefficiencies across large-scale transactional datasets.  
-This project supports stakeholders in monitoring financial performance, identifying risk drivers, and enabling data-driven recovery strategies.
+An end-to-end **Consumer Goods Revenue Risk & Payment Failure Analysis** project focused on analyzing transactional data to understand revenue performance, cancellations, payment failures, returns, and operational trends across large-scale datasets.  
+This project supports KPI monitoring and helps stakeholders improve visibility into revenue risk and payment realization patterns.
 
 ---
 
 ## 📌 Business Context
 
-Consumer goods organizations often face revenue loss due to cancellations, failed payments, returns, and operational bottlenecks.  
-This project builds a structured SQL-based analytics layer to improve visibility into revenue performance, customer risk exposure, and payment realization trends.
+Consumer goods organizations often face revenue loss due to cancellations, failed payments, returns, and operational inefficiencies.  
+This project analyzes transactional data to monitor revenue performance, identify operational patterns, and support reporting around financial risk exposure.
 
 ---
 
@@ -42,65 +42,39 @@ This project builds a structured SQL-based analytics layer to improve visibility
 
 ---
 
-## 🔎 Key Business Problems Addressed
-
-### 1️⃣ Revenue Performance Visibility  
-Identified stagnant revenue trends and key drivers across product categories and regions.
-
-### 2️⃣ High Cancellation Rates  
-Detected systemic operational issues affecting multiple channels and workflows.
-
-### 3️⃣ Payment Failure & Revenue Leakage  
-Reconciled transactions to highlight unrecovered revenue exposure.
-
-### 4️⃣ Customer Risk Exposure  
-Segmented customers based on activity patterns to identify at-risk segments.
-
-### 5️⃣ Returns Analysis  
-Identified operational and fulfillment-related drivers impacting returns.
-
----
-
-## 📊 Analysis Outputs
-
-![Data Model](https://github.com/user-attachments/assets/65843e7b-0c1a-437e-aaa2-52507a019b01)
-
-![Payment Reconciliation](https://github.com/user-attachments/assets/2dc1d6a9-a4c0-4283-aa33-579963f87957)
-
-![Pareto Analysis](https://github.com/user-attachments/assets/dec7eb68-973c-4710-a0e8-c42b0bb141e1)
-
-![Cancellation Rate](https://github.com/user-attachments/assets/72fcb069-6836-4611-b79e-1b0aa788383e)
-
-![Churn Classification](https://github.com/user-attachments/assets/090de4a7-616c-4193-b8ea-9aab2572b026)
-
-![YoY Growth](https://github.com/user-attachments/assets/aeaad99c-de0b-4691-b326-d50eec3fccb0)
-
----
-
 ## ⚙️ Analysis Approach
 
-Initial exploratory validation was conducted using Excel (PivotTables and QA checks), followed by scalable implementation using structured SQL logic for production-ready reporting.
+- Initial validation using Excel (PivotTables + QA checks)  
+- SQL-based transformation and reconciliation logic  
+- KPI tracking using modular CTE-based workflows  
+- Window functions for trend and cohort analysis  
 
 ---
 
-## ⚙️ Production SQL Patterns Used
+## 🧮 Sample SQL Queries
+
+### 🔹 Revenue at Risk Calculation
 
 ```sql
--- Dynamic filtering for recency-based analysis
-WHERE last_order_date <= DATEADD(DAY, -90, GETDATE())
+SELECT 
+    SUM(CASE WHEN payment_status IN ('Failed','Pending') 
+             THEN sales_amount ELSE 0 END) AS revenue_at_risk
+FROM Fact_Payments;
 
--- Safe division logic
-SUM(Sales_Amount) / NULLIF(COUNT(DISTINCT Order_ID), 0)
+### 🔹 Cancellation Rate Analysis
+SELECT 
+    COUNT(CASE WHEN order_status = 'Cancelled' THEN 1 END) * 100.0 
+    / COUNT(*) AS cancellation_rate
+FROM Fact_Sales;
 
--- Running totals
-SUM(daily_revenue) OVER (
- ORDER BY Order_Date
- ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-)
-
--- Percentile-based segmentation
-PERCENTILE_DISC(0.90) WITHIN GROUP (ORDER BY total_revenue) OVER()
-```
+###  🔹Running Revenue Trend
+SELECT 
+    order_date,
+    SUM(daily_revenue) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_total_revenue
+FROM daily_sales;
 
 ---
 
